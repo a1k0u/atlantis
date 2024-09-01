@@ -629,7 +629,7 @@ func (g *GithubClient) UpdateStatus(logger logging.SimpleLogging, repo models.Re
 }
 
 // MergePull merges the pull request.
-func (g *GithubClient) MergePull(logger logging.SimpleLogging, pull models.PullRequest, _ models.PullRequestOptions) error {
+func (g *GithubClient) MergePull(logger logging.SimpleLogging, pull models.PullRequest, pullOptions models.PullRequestOptions) error {
 	logger.Debug("Merging GitHub pull request %d", pull.Num)
 	// Users can set their repo to disallow certain types of merging.
 	// We detect which types aren't allowed and use the type that is.
@@ -652,6 +652,12 @@ func (g *GithubClient) MergePull(logger logging.SimpleLogging, pull models.PullR
 		} else if repo.GetAllowSquashMerge() {
 			method = squashMergeMethod
 		}
+	}
+	if pullOptions.MergeWithSquash {
+		if !repo.GetAllowSquashMerge() {
+			return fmt.Errorf("squash merge is not allowed by repository settings")
+		}
+		method = squashMergeMethod
 	}
 
 	// Now we're ready to make our API call to merge the pull request.

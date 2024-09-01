@@ -1001,10 +1001,12 @@ func TestGithubClient_MergePullHandlesError(t *testing.T) {
 func TestGithubClient_MergePullCorrectMethod(t *testing.T) {
 	logger := logging.NewNoopLogger(t)
 	cases := map[string]struct {
-		allowMerge  bool
-		allowRebase bool
-		allowSquash bool
-		expMethod   string
+		allowMerge      bool
+		allowRebase     bool
+		allowSquash     bool
+		mergeWithSquash bool
+		expMethod       string
+		expErr          string
 	}{
 		"all true": {
 			allowMerge:  true,
@@ -1035,6 +1037,21 @@ func TestGithubClient_MergePullCorrectMethod(t *testing.T) {
 			allowRebase: true,
 			allowSquash: false,
 			expMethod:   "rebase",
+		},
+		"all true: merge with squash: overrided by command": {
+			allowMerge:      true,
+			allowRebase:     true,
+			allowSquash:     true,
+			mergeWithSquash: true,
+			expMethod:       "squash",
+		},
+		"merge with squash: overrided by command: squash not allowed": {
+			allowMerge:      true,
+			allowRebase:     true,
+			allowSquash:     false,
+			mergeWithSquash: true,
+			expMethod:       "squash",
+			expErr:          "squash merge is not allowed by repository settings",
 		},
 	}
 
@@ -1110,9 +1127,14 @@ func TestGithubClient_MergePullCorrectMethod(t *testing.T) {
 					Num: 1,
 				}, models.PullRequestOptions{
 					DeleteSourceBranchOnMerge: false,
+					MergeWithSquash:           c.mergeWithSquash,
 				})
 
-			Ok(t, err)
+			if c.expErr == "" {
+				Ok(t, err)
+			} else {
+				ErrContains(t, c.expErr, err)
+			}
 		})
 	}
 }

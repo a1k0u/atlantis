@@ -29,6 +29,11 @@ Automerging can be enabled either by:
 If automerge is enabled, you can disable it for a single `atlantis apply`
 command with the `--auto-merge-disabled` option.
 
+## How to override merge method
+
+If automerge is enabled, you can use `--merge-with-squash` option
+for `atlantis apply` command to specify using squash as merge method. Implemented only for GitHub.
+
 ## Requirements
 
 ### All Plans Must Succeed
