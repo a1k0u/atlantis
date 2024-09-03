@@ -24,11 +24,11 @@ func NewMockCommentBuilder(options ...pegomock.Option) *MockCommentBuilder {
 func (mock *MockCommentBuilder) SetFailHandler(fh pegomock.FailHandler) { mock.fail = fh }
 func (mock *MockCommentBuilder) FailHandler() pegomock.FailHandler      { return mock.fail }
 
-func (mock *MockCommentBuilder) BuildApplyComment(repoRelDir string, workspace string, project string, autoMergeDisabled bool, mergeWithSquash bool) string {
+func (mock *MockCommentBuilder) BuildApplyComment(repoRelDir string, workspace string, project string, autoMergeDisabled bool, mergeMethod string) string {
 	if mock == nil {
 		panic("mock must not be nil. Use myMock := NewMockCommentBuilder().")
 	}
-	_params := []pegomock.Param{repoRelDir, workspace, project, autoMergeDisabled, mergeWithSquash}
+	_params := []pegomock.Param{repoRelDir, workspace, project, autoMergeDisabled, mergeMethod}
 	_result := pegomock.GetGenericMockFrom(mock).Invoke("BuildApplyComment", _params, []reflect.Type{reflect.TypeOf((*string)(nil)).Elem()})
 	var _ret0 string
 	if len(_result) != 0 {
@@ -106,8 +106,8 @@ type VerifierMockCommentBuilder struct {
 	timeout                time.Duration
 }
 
-func (verifier *VerifierMockCommentBuilder) BuildApplyComment(repoRelDir string, workspace string, project string, autoMergeDisabled bool, mergeWithSquash bool) *MockCommentBuilder_BuildApplyComment_OngoingVerification {
-	_params := []pegomock.Param{repoRelDir, workspace, project, autoMergeDisabled, mergeWithSquash}
+func (verifier *VerifierMockCommentBuilder) BuildApplyComment(repoRelDir string, workspace string, project string, autoMergeDisabled bool, mergeMethod string) *MockCommentBuilder_BuildApplyComment_OngoingVerification {
+	_params := []pegomock.Param{repoRelDir, workspace, project, autoMergeDisabled, mergeMethod}
 	methodInvocations := pegomock.GetGenericMockFrom(verifier.mock).Verify(verifier.inOrderContext, verifier.invocationCountMatcher, "BuildApplyComment", _params, verifier.timeout)
 	return &MockCommentBuilder_BuildApplyComment_OngoingVerification{mock: verifier.mock, methodInvocations: methodInvocations}
 }
@@ -117,12 +117,12 @@ type MockCommentBuilder_BuildApplyComment_OngoingVerification struct {
 	methodInvocations []pegomock.MethodInvocation
 }
 
-func (c *MockCommentBuilder_BuildApplyComment_OngoingVerification) GetCapturedArguments() (string, string, string, bool, bool) {
-	repoRelDir, workspace, project, autoMergeDisabled, mergeWithSquash := c.GetAllCapturedArguments()
-	return repoRelDir[len(repoRelDir)-1], workspace[len(workspace)-1], project[len(project)-1], autoMergeDisabled[len(autoMergeDisabled)-1], mergeWithSquash[len(mergeWithSquash)-1]
+func (c *MockCommentBuilder_BuildApplyComment_OngoingVerification) GetCapturedArguments() (string, string, string, bool, string) {
+	repoRelDir, workspace, project, autoMergeDisabled, mergeMethod := c.GetAllCapturedArguments()
+	return repoRelDir[len(repoRelDir)-1], workspace[len(workspace)-1], project[len(project)-1], autoMergeDisabled[len(autoMergeDisabled)-1], mergeMethod[len(mergeMethod)-1]
 }
 
-func (c *MockCommentBuilder_BuildApplyComment_OngoingVerification) GetAllCapturedArguments() (_param0 []string, _param1 []string, _param2 []string, _param3 []bool, _param4 []bool) {
+func (c *MockCommentBuilder_BuildApplyComment_OngoingVerification) GetAllCapturedArguments() (_param0 []string, _param1 []string, _param2 []string, _param3 []bool, _param4 []string) {
 	_params := pegomock.GetGenericMockFrom(c.mock).GetInvocationParams(c.methodInvocations)
 	if len(_params) > 0 {
 		if len(_params) > 0 {
@@ -150,9 +150,9 @@ func (c *MockCommentBuilder_BuildApplyComment_OngoingVerification) GetAllCapture
 			}
 		}
 		if len(_params) > 4 {
-			_param4 = make([]bool, len(c.methodInvocations))
+			_param4 = make([]string, len(c.methodInvocations))
 			for u, param := range _params[4] {
-				_param4[u] = param.(bool)
+				_param4[u] = param.(string)
 			}
 		}
 	}

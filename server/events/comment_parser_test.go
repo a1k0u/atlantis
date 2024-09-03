@@ -729,7 +729,7 @@ func TestBuildPlanApplyVersionComment(t *testing.T) {
 		workspace         string
 		project           string
 		autoMergeDisabled bool
-		mergeWithSquash   bool
+		mergeMethod       string
 		commentArgs       []string
 		expPlanFlags      string
 		expApplyFlags     string
@@ -829,10 +829,10 @@ func TestBuildPlanApplyVersionComment(t *testing.T) {
 			repoRelDir:      "dir",
 			workspace:       "workspace",
 			project:         "",
-			mergeWithSquash: true,
+			mergeMethod:     "squash",
 			commentArgs:     []string{`"arg1"`, `"arg2"`, `arg3`},
 			expPlanFlags:    "-d dir -w workspace -- arg1 arg2 arg3",
-			expApplyFlags:   "-d dir -w workspace --merge-with-squash",
+			expApplyFlags:   "-d dir -w workspace --merge-method squash",
 			expVersionFlags: "-d dir -w workspace",
 		},
 	}
@@ -845,7 +845,7 @@ func TestBuildPlanApplyVersionComment(t *testing.T) {
 					actComment := commentParser.BuildPlanComment(c.repoRelDir, c.workspace, c.project, c.commentArgs)
 					Equals(t, fmt.Sprintf("atlantis plan %s", c.expPlanFlags), actComment)
 				case command.Apply:
-					actComment := commentParser.BuildApplyComment(c.repoRelDir, c.workspace, c.project, c.autoMergeDisabled, c.mergeWithSquash)
+					actComment := commentParser.BuildApplyComment(c.repoRelDir, c.workspace, c.project, c.autoMergeDisabled, c.mergeMethod)
 					Equals(t, fmt.Sprintf("atlantis apply %s", c.expApplyFlags), actComment)
 				}
 			}
@@ -1034,7 +1034,8 @@ var ApplyUsage = `Usage of apply:
       --auto-merge-disabled   Disable automerge after apply.
   -d, --dir string            Apply the plan for this directory, relative to root of
                               repo, ex. 'child/dir'.
-      --merge-with-squash     Enable squash method for automerge.
+      --merge-method string   Value specifies merge method for the VCS if automerge
+                              enabled.
   -p, --project string        Apply the plan for this project. Refers to the name of
                               the project configured in a repo config file. Cannot
                               be used at same time as workspace or dir flags.

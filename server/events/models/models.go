@@ -185,9 +185,9 @@ type PullRequestOptions struct {
 	// When DeleteSourceBranchOnMerge flag is set to true VCS deletes the source branch after the PR is merged
 	// Applied by GitLab & AzureDevops
 	DeleteSourceBranchOnMerge bool
-	// When MergeWithSquash flag is set to true VCS merge pull request with squash method
-	// Implemented only for GitHub
-	MergeWithSquash bool
+	// MergeMethod specifies the merge method for the VCS
+	// Implemented only for Github
+	MergeMethod string
 }
 
 type PullRequestState int
