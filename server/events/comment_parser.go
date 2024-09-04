@@ -252,7 +252,7 @@ func (e *CommentParser) Parse(rawComment string, vcsHost models.VCSHostType) Com
 		flagSet.StringVarP(&dir, dirFlagLong, dirFlagShort, "", "Apply the plan for this directory, relative to root of repo, ex. 'child/dir'.")
 		flagSet.StringVarP(&project, projectFlagLong, projectFlagShort, "", "Apply the plan for this project. Refers to the name of the project configured in a repo config file. Cannot be used at same time as workspace or dir flags.")
 		flagSet.BoolVarP(&autoMergeDisabled, autoMergeDisabledFlagLong, autoMergeDisabledFlagShort, false, "Disable automerge after apply.")
-		flagSet.StringVarP(&mergeMethod, mergeMethodFlagLong, mergeMethodFlagShort, "", "Value specifies merge method for the VCS if automerge enabled.")
+		flagSet.StringVarP(&mergeMethod, mergeMethodFlagLong, mergeMethodFlagShort, "", "Specifies merge method for the VCS if automerge is enabled.")
 		flagSet.BoolVarP(&verbose, verboseFlagLong, verboseFlagShort, false, "Append Atlantis log to comment.")
 	case command.ApprovePolicies.String():
 		name = command.ApprovePolicies

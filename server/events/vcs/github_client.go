@@ -17,7 +17,9 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"maps"
 	"net/http"
+	"slices"
 	"strings"
 	"time"
 
@@ -641,41 +643,39 @@ func (g *GithubClient) MergePull(logger logging.SimpleLogging, pull models.PullR
 		return errors.Wrap(err, "fetching repo info")
 	}
 
-	var method string
-	mergeMethods := []struct {
-		Name     string
-		GetAllow func() bool
-	}{
-		{Name: "merge", GetAllow: repo.GetAllowMergeCommit},
-		{Name: "rebase", GetAllow: repo.GetAllowRebaseMerge},
-		{Name: "squash", GetAllow: repo.GetAllowSquashMerge},
+	const (
+		defaultMergeMethod = "merge"
+		rebaseMergeMethod  = "rebase"
+		squashMergeMethod  = "squash"
+	)
+
+	mergeMethods := map[string]func() bool{
+		defaultMergeMethod: repo.GetAllowMergeCommit,
+		rebaseMergeMethod:  repo.GetAllowRebaseMerge,
+		squashMergeMethod:  repo.GetAllowSquashMerge,
 	}
-	for _, mergeMethod := range mergeMethods {
-		if pullOptions.MergeMethod != "" {
-			if pullOptions.MergeMethod != mergeMethod.Name {
-				continue
-			}
-			if !mergeMethod.GetAllow() {
-				return fmt.Errorf("%s method is not allowed by repository settings", mergeMethod.Name)
-			}
-			method = pullOptions.MergeMethod
-			break
+
+	var method string
+	if pullOptions.MergeMethod != "" {
+		method = pullOptions.MergeMethod
+
+		isMethodAllowed, isMethodExist := mergeMethods[method]
+		if !isMethodExist {
+			return fmt.Errorf("%s method is unknown for GitHub, use one of them: %v", method, slices.Collect(maps.Keys(mergeMethods)))
 		}
 
-		if !mergeMethod.GetAllow() {
-			continue
+		if !isMethodAllowed() {
+			return fmt.Errorf("%s method is not allowed by repository settings", method)
 		}
-		method = mergeMethod.Name
-		break
-	}
-	if pullOptions.MergeMethod != "" && method == "" {
-		mergeMethodsNames := make([]string, 0, len(mergeMethods))
-		for _, mergeMethod := range mergeMethods {
-			mergeMethodsNames = append(mergeMethodsNames, mergeMethod.Name)
+	} else {
+		method = defaultMergeMethod
+		if !repo.GetAllowMergeCommit() {
+			if repo.GetAllowRebaseMerge() {
+				method = rebaseMergeMethod
+			} else if repo.GetAllowSquashMerge() {
+				method = squashMergeMethod
+			}
 		}
-		return fmt.Errorf("%s method is unknown for Github, use one of them: %v", pullOptions.MergeMethod, mergeMethodsNames)
-	} else if method == "" {
-		method = mergeMethods[0].Name
 	}
 
 	// Now we're ready to make our API call to merge the pull request.

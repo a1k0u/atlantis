@@ -1089,7 +1089,7 @@ func TestGithubClient_MergePullCorrectMethod(t *testing.T) {
 			allowSquash:       true,
 			mergeMethodOption: "unknown",
 			expMethod:         "",
-			expErr:            "unknown method is unknown for Github, use one of them: [merge rebase squash]",
+			expErr:            "unknown method is unknown for GitHub, use one of them: [merge rebase squash]",
 		},
 	}
 

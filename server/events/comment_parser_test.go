@@ -1034,8 +1034,7 @@ var ApplyUsage = `Usage of apply:
       --auto-merge-disabled   Disable automerge after apply.
   -d, --dir string            Apply the plan for this directory, relative to root of
                               repo, ex. 'child/dir'.
-      --merge-method string   Value specifies merge method for the VCS if automerge
-                              enabled.
+      --merge-method string   Specifies merge method for the VCS if automerge is enabled.
   -p, --project string        Apply the plan for this project. Refers to the name of
                               the project configured in a repo config file. Cannot
                               be used at same time as workspace or dir flags.
